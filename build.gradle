@@ -1,0 +1,44 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+version = '1.2'
+
+configurations {
+    provided
+}
+sourceSets {
+    main { compileClasspath += configurations.provided }
+}
+
+repositories {
+    jcenter()
+    maven {url "http://empcraft.com/maven2"}
+    maven {url "http://repo.dmulloy2.net/content/groups/public/"}
+    maven {url "https://hub.spigotmc.org/nexus/content/groups/public/"}
+}
+
+dependencies {
+    compile 'org.bukkit:bukkit:1.10.2-R0.1-SNAPSHOT'
+    //compile 'org.spigotmc:spigot-api:1.10.2-R0.1-SNAPSHOT'
+    compile files('libs/PlotSquared-Bukkit-18.02.08-d9a17bd-1963.jar')
+    compile files('libs/ProtocolLib.jar')
+    compile files('libs/HolographicDisplays.jar')
+    compile files('libs/worldguard-6.2.jar')
+    compile files('libs/Multiverse-Core-2.5.jar')
+    compile files('libs/LWC.jar')
+    compile files('libs/PreciousStones-10.0.4.jar')
+    compile files('libs/ExoticGarden-Nar.jar')
+    compile files('libs/CS-CoreLib.jar')
+    compile files('libs/Slimefun4.1.10.jar')
+    compile files('libs/worldedit-bukkit-6.1.5.jar')
+    compile files('libs/Vault.jar')
+    compile files('libs/Residence4.7.6.0.jar')
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.9'
+}
