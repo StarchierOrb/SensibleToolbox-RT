@@ -1,6 +1,7 @@
 package me.mrCookieSlime.sensibletoolbox.items.energycells;
 
 import me.mrCookieSlime.sensibletoolbox.api.util.STBUtil;
+import me.mrCookieSlime.sensibletoolbox.items.components.EnergizedIronIngot;
 
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -48,10 +49,7 @@ public class OneKEnergyCell extends EnergyCell {
 
     @Override
     public Recipe getRecipe() {
-        ShapedRecipe recipe = new ShapedRecipe(toItemStack());
-        recipe.shape("WWW", "W W", "   ");
-        recipe.setIngredient('W', STBUtil.makeWildCardMaterialData(Material.WOOD));
-        return recipe;
+        return null;
     }
 
 }

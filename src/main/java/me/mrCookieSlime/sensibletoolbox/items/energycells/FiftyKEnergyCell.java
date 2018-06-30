@@ -54,7 +54,7 @@ public class FiftyKEnergyCell extends EnergyCell {
         cell.setCharge(0.0);
         EnergizedIronIngot ei = new EnergizedIronIngot();
         registerCustomIngredients(cell, ei);
-        recipe.shape("III", "CCC", "   ");
+        recipe.shape("III", "CCC", "III");
         recipe.setIngredient('I', ei.getMaterialData());
         recipe.setIngredient('C', STBUtil.makeWildCardMaterialData(cell));
         return recipe;

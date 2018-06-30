@@ -1,6 +1,8 @@
 package me.mrCookieSlime.sensibletoolbox.items.energycells;
 
 import me.mrCookieSlime.sensibletoolbox.api.util.STBUtil;
+import me.mrCookieSlime.sensibletoolbox.items.components.EnergizedIronIngot;
+
 
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -49,8 +51,14 @@ public class TenKEnergyCell extends EnergyCell {
     @Override
     public Recipe getRecipe() {
         ShapedRecipe recipe = new ShapedRecipe(toItemStack());
-        recipe.shape("WWW", "W W", "   ");
+		FiveKEnergyCell cell = new FiveKEnergyCell();
+		cell.setCharge(0.0);
+        EnergizedIronIngot ei = new EnergizedIronIngot();
+        registerCustomIngredients(cell, ei);
+        recipe.shape("WWW", "CCC", "III");
+		recipe.setIngredient('I', ei.getMaterialData());
         recipe.setIngredient('W', STBUtil.makeWildCardMaterialData(Material.WOOD));
+		recipe.setIngredient('C', STBUtil.makeWildCardMaterialData(cell));
         return recipe;
     }
 

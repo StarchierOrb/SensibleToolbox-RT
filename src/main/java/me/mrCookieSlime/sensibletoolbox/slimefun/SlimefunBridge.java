@@ -226,7 +226,6 @@ public class SlimefunBridge {
 		Slimefun.addDescription("PAINTCAN", "&e1: 可以在主城的锻造台制造它！", "&e2: 通过 &d功勋商城 &e兑换");
 		Slimefun.addDescription("PUMP", "&e1: 可以在主城的锻造台制造它！", "&e2: 通过 &d功勋商城 &e兑换");
 		Slimefun.addDescription("MASHER", "&e1: 可以在主城的锻造台制造它！", "&e2: 通过 &d功勋商城 &e兑换");
-		Slimefun.addDescription("BASICSOLARCELL", "&e1: 可以在主城的锻造台制造它！", "&e2: 通过 &d功勋商城 &e兑换");
 	}
 
 }
