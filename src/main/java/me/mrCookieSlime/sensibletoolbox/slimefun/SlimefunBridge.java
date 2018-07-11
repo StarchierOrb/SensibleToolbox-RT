@@ -213,6 +213,7 @@ public class SlimefunBridge {
 		
 		//custom recipe
 		customp("MACHINEFRAME", RecipeType.ENHANCED_CRAFTING_TABLE, getItem("COMBINE_ITEM"), getItem("REINFORCED_ALLOY_INGOT"), getItem("COMBINE_ITEM"), getItem("SILICON"), new ItemStack(Material.GOLD_BLOCK), getItem("SILICON"), getItem("CIRCUITBOARD"), new ItemStack(Material.REDSTONE), getItem("CIRCUITBOARD"));
+		customp("ONEKENERGYCELL", RecipeType.ENHANCED_CRAFTING_TABLE, getItem("ZINC_INGOT"), getItem("REINFORCED_ALLOY_INGOT"), getItem("ZINC_INGOT"), getItem("SILICON"), new ItemStack(Material.GOLD_INGOT), getItem("SILICON"), getItem("LEAD_DUST"), new ItemStack(Material.REDSTONE), getItem("LEAD_DUST"));
 		
 		Slimefun.addDescription("REACTOR_COOLANT_PORT", "&e1: 把这个放在反应堆的底部", "&e2: 用冷却液充满它", "&3: 请确保提供更多的冷却剂电池", "&e* 因为它们随着时间被消耗掉");
 		//custom deprecation
