@@ -3,7 +3,7 @@ description: A collection of generally useful tools and utilites! NOTE this is a
 authors: [mrCookieSlime, desht, lzj]
 website: http://thebusybiscuit.github.io/
 main: me.mrCookieSlime.sensibletoolbox.SensibleToolboxPlugin
-version: 2.0.0-SNAPSHOT
+version: 2.0.1-SNAPSHOT
 depends: [ProtocolLib]
 softdepend: [ CS-CoreLib, Landslide, HolographicDisplays, WorldGuard, PreciousStones, LWC, Multiverse-Core, Slimefun, ExoticGarden, Residence, PlotSquared ]
 

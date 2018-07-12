@@ -57,7 +57,7 @@ public class FiveKEnergyCell extends EnergyCell {
         registerCustomIngredients(cell, ei);
         recipe.shape("WWW", "CCC", "III");
 		recipe.setIngredient('I', ei.getMaterialData());
-        recipe.setIngredient('W', STBUtil.makeWildCardMaterialData(Material.WOOD));
+        recipe.setIngredient('W', STBUtil.makeWildCardMaterialData(Material.IRON_INGOT));
 		recipe.setIngredient('C', STBUtil.makeWildCardMaterialData(cell));
         return recipe;
     }

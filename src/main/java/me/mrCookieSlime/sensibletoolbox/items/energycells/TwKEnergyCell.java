@@ -57,7 +57,7 @@ public class TwKEnergyCell extends EnergyCell {
         registerCustomIngredients(cell, ei);
         recipe.shape("WWW", "C C", "III");
 		recipe.setIngredient('I', ei.getMaterialData());
-        recipe.setIngredient('W', STBUtil.makeWildCardMaterialData(Material.WOOD));
+        recipe.setIngredient('W', STBUtil.makeWildCardMaterialData(Material.IRON_INGOT));
 		recipe.setIngredient('C', STBUtil.makeWildCardMaterialData(cell));
         return recipe;
     }
