@@ -1,9 +1,14 @@
 # SensibleToolbox-RT
 A reloaded version of stb
-·重置版本的STB，修复了一堆花里胡哨的bug
+
+ ·重置版本的STB，修复了一堆花里胡哨的bug
+ 
 ·新增几个物品
+ 
 ·添加了自定义材质
+ 
 ·增加插件支持：Residence、PlotSquared
+ 
 ·原链接(bukkitDev):https://dev.bukkit.org/projects/sensible-toolbox
 
 
