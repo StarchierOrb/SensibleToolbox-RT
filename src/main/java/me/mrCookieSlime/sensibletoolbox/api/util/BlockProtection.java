@@ -9,11 +9,13 @@ import com.bekvon.bukkit.residence.protection.ResidencePermissions;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
@@ -22,8 +24,15 @@ import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
+import me.desht.dhutils.ConfigurationListener;
+import me.desht.dhutils.ConfigurationManager;
+import me.desht.dhutils.DHUtilsException;
+import me.desht.dhutils.DHValidate;
 import me.desht.dhutils.Debugger;
+import me.desht.dhutils.ItemGlow;
 import me.desht.dhutils.LogUtils;
+import me.desht.dhutils.MessagePager;
+import me.desht.dhutils.MiscUtil;
 import me.mrCookieSlime.sensibletoolbox.SensibleToolboxPlugin;
 import me.mrCookieSlime.sensibletoolbox.api.SensibleToolbox;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
@@ -50,9 +59,6 @@ import java.util.logging.Level;
 public class BlockProtection {
     private BlockProtectionType blockProtectionType = BlockProtectionType.BEST;
     private InvProtectionType invProtectionType = InvProtectionType.BEST;
-	private Plugin isResAvailable = getServer().getPluginManager().getPlugin("Residence");
-	private Plugin isPlotAvailable = getServer().getPluginManager().getPlugin("PlotSquared");
-	private Plugin isSkyAvailable = getServer().getPluginManager().getPlugin("ASkyBlock");
 	//test
 //	Plugin plugin, FP;
 
@@ -86,7 +92,6 @@ public class BlockProtection {
             case BEST:
                 //if (SensibleToolbox.getPluginInstance().isWorldGuardAvailable()) {
                     this.blockProtectionType = BlockProtectionType.BEST;
-					getLogger().log(Level.INFO, "请注意：你正在选择的方块保护方法为 BEST，这意味着插件将尝试保护所有支持的插件！" );
                // }
                 break;
             default:
@@ -119,7 +124,6 @@ public class BlockProtection {
                     this.invProtectionType = InvProtectionType.NONE;
                 }*/
 				this.invProtectionType = InvProtectionType.BEST;
-					getLogger().log(Level.INFO, "请注意：你正在选择的物品保护方法为 BEST，这意味着插件将尝试保护所有支持的插件！" );
                 break;
             default:
                 if (invProtectionType.isAvailable()) {
@@ -169,22 +173,22 @@ public class BlockProtection {
 		        /*if(residence==null) RES = true;
 		        ResidencePermissions perms = residence.getPermissions();
 		        RES = perms.playerHas(player, Flags.container, true);*/
-				if (SensibleToolbox.getPluginInstance().isWorldGuardAvailable() !=null) {
+				if (SensibleToolbox.getPluginInstance().isWorldGuardAvailable()==true) {
 					ApplicableRegionSet set = WGBukkit.getRegionManager(block.getWorld()).getApplicableRegions(block.getLocation());
 					//return set.allows(DefaultFlag.CHEST_ACCESS, WGBukkit.getPlugin().wrapPlayer(player));
 					WGUARD = set.allows(DefaultFlag.CHEST_ACCESS, WGBukkit.getPlugin().wrapPlayer(player));
 				}
 				//start
-				if (SensibleToolbox.getPluginInstance().isASkyBlockAvailable() !=null) {
+				if (SensibleToolbox.getPluginInstance().isASkyBlockAvailable()==true) {
 					ASkyBlockAPI skyapi = ASkyBlockAPI.getInstance();
 					if(skyapi.getIslandWorld() != null) {
-						if (skyapi.getIslandWorld().equals(this.getLocation().getWorld())) {
+						if (skyapi.getIslandWorld().equals(block.getLocation().getWorld())) {
 							//this!
-							if (skyapi.islandAtLocation(this.getLocation())) {
-								UUID skyuuid = skyapi.getOwner(this.getLocation());
+							if (skyapi.islandAtLocation(block.getLocation())) {
+								UUID skyuuid = skyapi.getOwner(block.getLocation());
 								if(skyuuid!=null) {
-									if(skyuuid.equals(this.getPlayer().getUniqueId())) {
-										ASKY = skyapi.getTeamMembers(skyuuid).contains(this.getPlayer().getUniqueId())
+									if(skyuuid.equals(player.getPlayer().getUniqueId())) {
+										ASKY = skyapi.getTeamMembers(skyuuid).contains(player.getPlayer().getUniqueId());
 									}
 								}
 							}
@@ -331,16 +335,16 @@ public class BlockProtection {
 		}
 				}
 						//!!
-			if (SensibleToolbox.getPluginInstance().isASkyBlockAvailable() !=null) {
+			if (SensibleToolbox.getPluginInstance().isASkyBlockAvailable()==true) {
 					ASkyBlockAPI skyapi = ASkyBlockAPI.getInstance();
 					if(skyapi.getIslandWorld() != null) {
-						if (skyapi.getIslandWorld().equals(this.getLocation().getWorld())) {
+						if (skyapi.getIslandWorld().equals(block.getLocation().getWorld())) {
 							//this!
-							if (skyapi.islandAtLocation(this.getLocation())) {
-								UUID skyuuid = skyapi.getOwner(this.getLocation());
+							if (skyapi.islandAtLocation(block.getLocation())) {
+								UUID skyuuid = skyapi.getOwner(block.getLocation());
 								if(skyuuid!=null) {
-									if(skyuuid.equals(this.getPlayer().getUniqueId())) {
-										ASKY = skyapi.getTeamMembers(skyuuid).contains(this.getPlayer().getUniqueId())
+									if(skyuuid.equals(player.getPlayer().getUniqueId())) {
+										ASKYPT = skyapi.getTeamMembers(skyuuid).contains(player.getPlayer().getUniqueId());
 									}
 								}
 							}
@@ -348,7 +352,7 @@ public class BlockProtection {
 					}
 				}
 		//TOTAL CHECK
-				if (SensibleToolbox.getPluginInstance().isWorldGuardAvailable() !=null) {
+				if (SensibleToolbox.getPluginInstance().isWorldGuardAvailable()==true) {
                 WGPT = WGBukkit.getPlugin().canBuild(player, block);}
 				if (SensibleToolbox.getPluginInstance().getRes() !=null) {
 				ClaimedResidence residence = ResidenceApi.getResidenceManager().getByLoc(block.getLocation());
@@ -359,7 +363,7 @@ public class BlockProtection {
 				RESPT = perms.playerHas(player, Flags.build, true);	
 				}}
 				
-				if (WGPT&&RESPT&&PSPT) {
+				if (WGPT&&RESPT&&PSPT&&ASKYPT) {
 					return true;
 				}
 				player.sendMessage(ChatColor.RED + "你没有该区域的 " + ChatColor.GOLD + "BUILD" + ChatColor.RED + " 权限");

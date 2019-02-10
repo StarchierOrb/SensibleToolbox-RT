@@ -543,8 +543,8 @@ public class SensibleToolboxPlugin extends JavaPlugin implements ConfigurationLi
     private void setupASky() {
         Plugin askyPlugin = getServer().getPluginManager().getPlugin("ASkyBlock");
         if (askyPlugin != null && askyPlugin.isEnabled()) {
-            Debugger.getInstance().debug("ASkyBlock v" + plotPlugin.getDescription().getVersion());
-			getLogger().log(Level.INFO, "找到 ASkyBlock，成功挂载！ 插件版本：" + plotPlugin.getDescription().getVersion());
+            Debugger.getInstance().debug("ASkyBlock v" + askyPlugin.getDescription().getVersion());
+			getLogger().log(Level.INFO, "找到 ASkyBlock，成功挂载！ 插件版本：" + askyPlugin.getDescription().getVersion());
 			boolean isASBok = true;
         }
     }
