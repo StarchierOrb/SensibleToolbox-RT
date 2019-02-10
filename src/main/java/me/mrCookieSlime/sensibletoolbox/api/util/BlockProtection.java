@@ -37,6 +37,12 @@ import com.intellectualcrafters.plot.api.PlotAPI;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Plot;
 
+import com.wasteofplastic.askyblock.ASkyBlockAPI;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Check protections in force for various vanilla blocks and inventories.
@@ -44,6 +50,9 @@ import com.intellectualcrafters.plot.object.Plot;
 public class BlockProtection {
     private BlockProtectionType blockProtectionType = BlockProtectionType.BEST;
     private InvProtectionType invProtectionType = InvProtectionType.BEST;
+	private Plugin isResAvailable = getServer().getPluginManager().getPlugin("Residence");
+	private Plugin isPlotAvailable = getServer().getPluginManager().getPlugin("PlotSquared");
+	private Plugin isSkyAvailable = getServer().getPluginManager().getPlugin("ASkyBlock");
 	//test
 //	Plugin plugin, FP;
 
@@ -75,16 +84,10 @@ public class BlockProtection {
     public void setBlockProtectionType(BlockProtectionType blockProtectionType) {
         switch (blockProtectionType) {
             case BEST:
-                if (SensibleToolbox.getPluginInstance().isWorldGuardAvailable()) {
-                    this.blockProtectionType = BlockProtectionType.WORLDGUARD;
-                } else if (SensibleToolbox.getPluginInstance().isPreciousStonesAvailable()) {
-                    this.blockProtectionType = BlockProtectionType.PRECIOUS_STONES;
-                } else if(SensibleToolbox.getPluginInstance().getRes() != null) {
-                	this.blockProtectionType = BlockProtectionType.WORLDGUARD;
-                } else if(SensibleToolbox.getPluginInstance().getplot() != null) {
-                	this.blockProtectionType = BlockProtectionType.WORLDGUARD;
-					//test code
-                }
+                //if (SensibleToolbox.getPluginInstance().isWorldGuardAvailable()) {
+                    this.blockProtectionType = BlockProtectionType.BEST;
+					getLogger().log(Level.INFO, "请注意：你正在选择的方块保护方法为 BEST，这意味着插件将尝试保护所有支持的插件！" );
+               // }
                 break;
             default:
                 if (blockProtectionType.isAvailable()) {
@@ -108,17 +111,15 @@ public class BlockProtection {
     public void setInvProtectionType(InvProtectionType invProtectionType) {
         switch (invProtectionType) {
             case BEST:
-                if (SensibleToolbox.getPluginInstance().getLWC() != null) {
+                /*if (SensibleToolbox.getPluginInstance().getLWC() != null) {
                     this.invProtectionType = InvProtectionType.LWC;
                 } else if (SensibleToolbox.getPluginInstance().isWorldGuardAvailable()) {
                     this.invProtectionType = InvProtectionType.WORLDGUARD;
-                } else if(SensibleToolbox.getPluginInstance().getRes() != null) {
-                	this.invProtectionType = InvProtectionType.WORLDGUARD;
-                } else if(SensibleToolbox.getPluginInstance().getplot() != null) {
-                	this.blockProtectionType = BlockProtectionType.WORLDGUARD;
-                }else{
+                } else{
                     this.invProtectionType = InvProtectionType.NONE;
-                }
+                }*/
+				this.invProtectionType = InvProtectionType.BEST;
+					getLogger().log(Level.INFO, "请注意：你正在选择的物品保护方法为 BEST，这意味着插件将尝试保护所有支持的插件！" );
                 break;
             default:
                 if (invProtectionType.isAvailable()) {
@@ -152,8 +153,13 @@ public class BlockProtection {
                 } else {
                     return true;
                 }
+				/*
             case WORLDGUARD:
-			    boolean RES = true, WGUARD = true;
+
+            case RESIDENCE:
+                throw new IllegalArgumentException("should never get here!");*/
+            case BEST:
+			    boolean RES = true, WGUARD = true, ASKY = true;
 				if (SensibleToolbox.getPluginInstance().getRes() != null) {
 					ClaimedResidence residence = ResidenceApi.getResidenceManager().getByLoc(block.getLocation());
 					if(residence==null) RES = true;
@@ -163,19 +169,35 @@ public class BlockProtection {
 		        /*if(residence==null) RES = true;
 		        ResidencePermissions perms = residence.getPermissions();
 		        RES = perms.playerHas(player, Flags.container, true);*/
-                ApplicableRegionSet set = WGBukkit.getRegionManager(block.getWorld()).getApplicableRegions(block.getLocation());
-                //return set.allows(DefaultFlag.CHEST_ACCESS, WGBukkit.getPlugin().wrapPlayer(player));
-                WGUARD = set.allows(DefaultFlag.CHEST_ACCESS, WGBukkit.getPlugin().wrapPlayer(player));
-				if (RES&&WGUARD) {
+				if (SensibleToolbox.getPluginInstance().isWorldGuardAvailable() !=null) {
+					ApplicableRegionSet set = WGBukkit.getRegionManager(block.getWorld()).getApplicableRegions(block.getLocation());
+					//return set.allows(DefaultFlag.CHEST_ACCESS, WGBukkit.getPlugin().wrapPlayer(player));
+					WGUARD = set.allows(DefaultFlag.CHEST_ACCESS, WGBukkit.getPlugin().wrapPlayer(player));
+				}
+				//start
+				if (SensibleToolbox.getPluginInstance().isASkyBlockAvailable() !=null) {
+					ASkyBlockAPI skyapi = ASkyBlockAPI.getInstance();
+					if(skyapi.getIslandWorld() != null) {
+						if (skyapi.getIslandWorld().equals(this.getLocation().getWorld())) {
+							//this!
+							if (skyapi.islandAtLocation(this.getLocation())) {
+								UUID skyuuid = skyapi.getOwner(this.getLocation());
+								if(skyuuid!=null) {
+									if(skyuuid.equals(this.getPlayer().getUniqueId())) {
+										ASKY = skyapi.getTeamMembers(skyuuid).contains(this.getPlayer().getUniqueId())
+									}
+								}
+							}
+						}
+					}
+				}
+//end
+				if (RES&&WGUARD&&ASKY) {
 					return true;
 				}else {
-					player.sendMessage(ChatColor.RED + "你没有 " + ChatColor.GOLD + "container" + ChatColor.RED + " 权限");
+					player.sendMessage(ChatColor.RED + "你没有 " + ChatColor.GOLD + "容器使用(container)" + ChatColor.RED + " 权限");
 					return false;
 				}
-            case RESIDENCE:
-                return false;
-            case BEST:
-                throw new IllegalArgumentException("should never get here!");
             default:
                 return true;
         }
@@ -249,42 +271,27 @@ public class BlockProtection {
     public boolean playerCanBuild(Player player, Block block, Operation op) {
         switch (blockProtectionType) {
             case WORLDGUARD:
-			    boolean WGPT = true, RESPT = true, PSPT = true;
+				// test code
+            case PRECIOUS_STONES:
+                switch (op) {
+                    case PLACE:
+                        return PreciousStones.API().canPlace(player, block.getLocation());
+                    case BREAK:
+                        return PreciousStones.API().canBreak(player, block.getLocation());
+                    default:
+                        return false;
+                }
+            case BEST:
+			//!!!!
+			    boolean WGPT = true, RESPT = true, PSPT = true, ASKYPT = true;
 				// RES CHECK
 		        //ClaimedResidence residence = ResidenceApi.getResidenceManager().getByLoc(block.getLocation());
 		        //if(residence==null) RESPT = true;
 		        //ResidencePermissions perms = residence.getPermissions();
 				// PS CHECK
-			    pAPI = new PlotAPI();
-
-/*		        if(pAPI.isPlotWorld(block.getLocation().getWorld())){
-			        com.intellectualcrafters.plot.object.Location loc = new com.intellectualcrafters.plot.object.Location(block.getLocation().getWorld().getName(), 
-						(int) block.getLocation().getX(), 
-						(int) block.getLocation().getY(), 
-						(int) block.getLocation().getZ(), 
-						block.getLocation().getYaw(), 
-						block.getLocation().getPitch());
-			        if(loc.isPlotArea()){
-				    	Plot plot = pAPI.getPlot(block.getLocation());
-				    		if(plot!=null){
-					    	if(plot.isAdded(player.getUniqueId())) PSPT = true;
-							Debugger.getInstance().debug(3, "PLOT STATUS(isAdd) " + PSPT);
-					    	if(plot.isOwner(player.getUniqueId())) PSPT = true;
-							Debugger.getInstance().debug(3, "PLOT STATUS(isOwner) " + PSPT);
-				}
-				PSPT = false;
-				Debugger.getInstance().debug(3, "PLOT STATUS(Plot!=null) " + PSPT);
-				
-			}else{
-				PSPT = true;
-				Debugger.getInstance().debug(3, "PLOT STATUS(Area) " + PSPT);
-			}
-		}else{
-			PSPT = true;
-			Debugger.getInstance().debug(3, "PLOT STATUS(isOwner) " + PSPT);
-		}
-*/
-		        if(pAPI.isPlotWorld(block.getLocation().getWorld())){
+				pAPI = new PlotAPI();
+				if (pAPI!=null){
+					if(pAPI.isPlotWorld(block.getLocation().getWorld())){
 			        com.intellectualcrafters.plot.object.Location loc = new com.intellectualcrafters.plot.object.Location(block.getLocation().getWorld().getName(), 
 						(int) block.getLocation().getX(), 
 						(int) block.getLocation().getY(), 
@@ -322,22 +329,43 @@ public class BlockProtection {
 			PSPT = true;
 			Debugger.getInstance().debug(3, "PLOT STATUS(isOwner) " + PSPT);
 		}
-
+				}
+						//!!
+			if (SensibleToolbox.getPluginInstance().isASkyBlockAvailable() !=null) {
+					ASkyBlockAPI skyapi = ASkyBlockAPI.getInstance();
+					if(skyapi.getIslandWorld() != null) {
+						if (skyapi.getIslandWorld().equals(this.getLocation().getWorld())) {
+							//this!
+							if (skyapi.islandAtLocation(this.getLocation())) {
+								UUID skyuuid = skyapi.getOwner(this.getLocation());
+								if(skyuuid!=null) {
+									if(skyuuid.equals(this.getPlayer().getUniqueId())) {
+										ASKY = skyapi.getTeamMembers(skyuuid).contains(this.getPlayer().getUniqueId())
+									}
+								}
+							}
+						}
+					}
+				}
 		//TOTAL CHECK
-                WGPT = WGBukkit.getPlugin().canBuild(player, block);
+				if (SensibleToolbox.getPluginInstance().isWorldGuardAvailable() !=null) {
+                WGPT = WGBukkit.getPlugin().canBuild(player, block);}
+				if (SensibleToolbox.getPluginInstance().getRes() !=null) {
 				ClaimedResidence residence = ResidenceApi.getResidenceManager().getByLoc(block.getLocation());
 				if(residence==null) {
 					RESPT = true;
 				}else{				
 				ResidencePermissions perms = residence.getPermissions();
 				RESPT = perms.playerHas(player, Flags.build, true);	
-				}
+				}}
 				
 				if (WGPT&&RESPT&&PSPT) {
 					return true;
 				}
 				player.sendMessage(ChatColor.RED + "你没有该区域的 " + ChatColor.GOLD + "BUILD" + ChatColor.RED + " 权限");
 				return false;
+				
+
             case RESIDENCE:
 			// tresidence > residence
 			// tperms > perms
@@ -352,6 +380,37 @@ public class BlockProtection {
 				}else {
 					return false;
 				}
+				//}
+
+
+/*		        if(pAPI.isPlotWorld(block.getLocation().getWorld())){
+			        com.intellectualcrafters.plot.object.Location loc = new com.intellectualcrafters.plot.object.Location(block.getLocation().getWorld().getName(), 
+						(int) block.getLocation().getX(), 
+						(int) block.getLocation().getY(), 
+						(int) block.getLocation().getZ(), 
+						block.getLocation().getYaw(), 
+						block.getLocation().getPitch());
+			        if(loc.isPlotArea()){
+				    	Plot plot = pAPI.getPlot(block.getLocation());
+				    		if(plot!=null){
+					    	if(plot.isAdded(player.getUniqueId())) PSPT = true;
+							Debugger.getInstance().debug(3, "PLOT STATUS(isAdd) " + PSPT);
+					    	if(plot.isOwner(player.getUniqueId())) PSPT = true;
+							Debugger.getInstance().debug(3, "PLOT STATUS(isOwner) " + PSPT);
+				}
+				PSPT = false;
+				Debugger.getInstance().debug(3, "PLOT STATUS(Plot!=null) " + PSPT);
+				
+			}else{
+				PSPT = true;
+				Debugger.getInstance().debug(3, "PLOT STATUS(Area) " + PSPT);
+			}
+		}else{
+			PSPT = true;
+			Debugger.getInstance().debug(3, "PLOT STATUS(isOwner) " + PSPT);
+		}
+*/
+				
 			case PS:
 			    pAPI = new PlotAPI();
 		        if(pAPI.isPlotWorld(block.getLocation().getWorld())){
@@ -374,18 +433,8 @@ public class BlockProtection {
 		}else{
 			return true;
 		}
-				// test code
-            case PRECIOUS_STONES:
-                switch (op) {
-                    case PLACE:
-                        return PreciousStones.API().canPlace(player, block.getLocation());
-                    case BREAK:
-                        return PreciousStones.API().canBreak(player, block.getLocation());
-                    default:
-                        return false;
-                }
-            case BEST:
-                throw new IllegalArgumentException("should never get here!");
+		
+		
             default:
                 return true;
         }

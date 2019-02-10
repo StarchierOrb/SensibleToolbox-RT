@@ -198,6 +198,7 @@ public class SensibleToolboxPlugin extends JavaPlugin implements ConfigurationLi
     private SoundMufflerListener soundMufflerListener;
     private PlayerUUIDTracker uuidTracker;
     private boolean inited = false;
+    private boolean isASBok = false;
     private boolean holographicDisplays = false;
     private BukkitTask energyTask = null;
     private LWC lwc = null;
@@ -359,6 +360,7 @@ public class SensibleToolboxPlugin extends JavaPlugin implements ConfigurationLi
             setupMultiverse();
             setupRes();
             setupPlot();
+            setupASky();
 
             scuRelayIDTracker = new IDTracker(this, "scu_relay_id");
 
@@ -538,6 +540,14 @@ public class SensibleToolboxPlugin extends JavaPlugin implements ConfigurationLi
 			getLogger().log(Level.INFO, "找到 PlotSquared，成功挂载！ 插件版本：" + plotPlugin.getDescription().getVersion());
         }
     }
+    private void setupASky() {
+        Plugin askyPlugin = getServer().getPluginManager().getPlugin("ASkyBlock");
+        if (askyPlugin != null && askyPlugin.isEnabled()) {
+            Debugger.getInstance().debug("ASkyBlock v" + plotPlugin.getDescription().getVersion());
+			getLogger().log(Level.INFO, "找到 ASkyBlock，成功挂载！ 插件版本：" + plotPlugin.getDescription().getVersion());
+			boolean isASBok = true;
+        }
+    }
 
     public boolean isProtocolLibEnabled() {
         return protocolLibEnabled;
@@ -668,6 +678,7 @@ public class SensibleToolboxPlugin extends JavaPlugin implements ConfigurationLi
     public EnergyNetManager getEnergyNetManager() 			{			return enetManager;															}
     public boolean isWorldGuardAvailable() 					{			return worldGuardPlugin != null && worldGuardPlugin.isEnabled();			}
     public boolean isPreciousStonesAvailable() 				{			return preciousStonesPlugin != null && preciousStonesPlugin.isEnabled(); 	}
+    public boolean isASkyBlockAvailable() 				    {			return isASBok; 	                                                        }
     public BlockProtection getBlockProtection() 			{			return blockProtection;														}
     public ConfigCache getConfigCache() 					{			return configCache;															}
     public MultiverseCore getMultiverseCore() 				{			return multiverseCore;														}
